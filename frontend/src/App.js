@@ -5,6 +5,9 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
+import ProfilePage from './components/ProfilePage';
+import SharedFilePage from './components/SharedFilePage';
+import ActivityPage from './components/ActivityPage';
 import LoadingSpinner from './components/LoadingSpinner';
 
 const ProtectedRoute = ({ children }) => {
@@ -56,6 +59,28 @@ function App() {
                   <Dashboard />
                 </ProtectedRoute>
               } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/activity" 
+              element={
+                <ProtectedRoute>
+                  <ActivityPage />
+                </ProtectedRoute>
+              } 
+            />
+            {/* No ProtectedRoute here on purpose — this page must work for
+                logged-out visitors, since that's the whole point of a share link */}
+            <Route 
+              path="/share/:shareId" 
+              element={<SharedFilePage />} 
             />
             <Route 
               path="/" 

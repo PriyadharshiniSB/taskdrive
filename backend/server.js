@@ -4,10 +4,14 @@ const path = require('path');
 const fs = require('fs-extra');
 require('dotenv').config();
 
+const connectDB = require('./config/db');
+
 const authRoutes = require('./routes/auth');
 const fileRoutes = require('./routes/files');
 const folderRoutes = require('./routes/folders');
-
+const todoRoutes = require('./routes/todos');
+const publicRoutes = require('./routes/public');
+const activityRoutes = require('./routes/activity');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -27,7 +31,9 @@ app.use('/uploads', express.static(uploadsDir));
 app.use('/api/auth', authRoutes);
 app.use('/api/files', fileRoutes);
 app.use('/api/folders', folderRoutes);
-
+app.use('/api/todos', todoRoutes);
+app.use('/api/public', publicRoutes);
+app.use('/api/activity', activityRoutes);
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Google Drive Clone API is running' });
@@ -44,6 +50,12 @@ app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Connect to MongoDB first, then start accepting requests
+const start = async () => {
+  await connectDB();
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+};
+
+start();

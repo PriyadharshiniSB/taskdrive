@@ -1,6 +1,7 @@
 const express = require('express');
 const auth = require('../middleware/auth');
 const FileModel = require('../models/File');
+const Activity = require('../models/Activity');
 
 const router = express.Router();
 
@@ -30,11 +31,37 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
+// Restore a trashed folder
+router.patch('/:id/restore', auth, async (req, res) => {
+  try {
+    const folder = await FileModel.restoreFolder(req.params.id, req.user.id);
+    if (!folder) {
+      return res.status(404).json({ error: 'Folder not found in trash' });
+    }
+    res.json({ message: 'Folder restored successfully', folder });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to restore folder' });
+  }
+});
+
+// Permanently delete a folder
+router.delete('/:id/permanent', auth, async (req, res) => {
+  try {
+    const deleted = await FileModel.permanentlyDeleteFolder(req.params.id, req.user.id);
+    if (!deleted) {
+      return res.status(404).json({ error: 'Folder not found' });
+    }
+    res.json({ message: 'Folder permanently deleted' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to permanently delete folder' });
+  }
+});
+
 // Get folder contents
 router.get('/:id', auth, async (req, res) => {
   try {
     const folderId = req.params.id;
-    
+
     const folder = await FileModel.getFolderById(folderId, req.user.id);
     if (!folder) {
       return res.status(404).json({ error: 'Folder not found' });
@@ -53,18 +80,35 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
-// Delete folder
+// Delete folder (soft delete - moves to trash)
 router.delete('/:id', auth, async (req, res) => {
   try {
     const deleted = await FileModel.deleteFolder(req.params.id, req.user.id);
-    
+
     if (!deleted) {
       return res.status(404).json({ error: 'Folder not found' });
     }
 
-    res.json({ message: 'Folder deleted successfully' });
+    res.json({ message: 'Folder moved to trash' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete folder' });
+  }
+});
+
+// Set folder color
+router.patch('/:id/color', auth, async (req, res) => {
+  try {
+    const { color } = req.body;
+    if (!color) {
+      return res.status(400).json({ error: 'Color is required' });
+    }
+    const folder = await FileModel.setFolderColor(req.params.id, req.user.id, color);
+    if (!folder) {
+      return res.status(404).json({ error: 'Folder not found' });
+    }
+    res.json({ message: 'Folder color updated', folder });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update folder color' });
   }
 });
 
@@ -72,13 +116,13 @@ router.delete('/:id', auth, async (req, res) => {
 router.patch('/:id/rename', auth, async (req, res) => {
   try {
     const { name } = req.body;
-    
+
     if (!name) {
       return res.status(400).json({ error: 'New name is required' });
     }
 
     const folder = await FileModel.renameFolder(req.params.id, req.user.id, name);
-    
+
     if (!folder) {
       return res.status(404).json({ error: 'Folder not found' });
     }
@@ -86,6 +130,34 @@ router.patch('/:id/rename', auth, async (req, res) => {
     res.json({ message: 'Folder renamed successfully', folder });
   } catch (error) {
     res.status(500).json({ error: 'Failed to rename folder' });
+  }
+});
+
+// Turn public sharing on for a folder — same pattern as files.js's /share
+router.post('/:id/share', auth, async (req, res) => {
+  try {
+    const folder = await FileModel.enableFolderShare(req.params.id, req.user.id);
+    if (!folder) {
+      return res.status(404).json({ error: 'Folder not found' });
+    }
+    await Activity.log(req.user.id, 'share', folder.name, 'folder');
+    res.json({ message: 'Folder sharing turned on', folder });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to enable folder sharing' });
+  }
+});
+
+// Turn public sharing off for a folder
+router.delete('/:id/share', auth, async (req, res) => {
+  try {
+    const folder = await FileModel.disableFolderShare(req.params.id, req.user.id);
+    if (!folder) {
+      return res.status(404).json({ error: 'Folder not found' });
+    }
+    await Activity.log(req.user.id, 'unshare', folder.name, 'folder');
+    res.json({ message: 'Folder sharing turned off', folder });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to disable folder sharing' });
   }
 });
 
