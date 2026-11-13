@@ -1,92 +1,96 @@
-# 🚀 Google Drive Clone - Setup Guide
+# 🚀 TaskDrive – Setup Guide
 
-## Quick Start Commands
+## Quick Start
 
 ### 1. Clone the Repository
+
 ```bash
-git clone https://github.com/Akshatcodegenics/google-drive-clone.git
-cd google-drive-clone
+git clone https://github.com/PriyadharshiniSB/taskdrive.git
+cd taskdrive
 ```
 
 ### 2. Backend Setup
+
 ```bash
 cd backend
 npm install
-cp .env.example .env
-# Edit .env file with your configurations
+```
+
+### 3. Configure Environment Variables
+
+Create a `.env` file inside the `backend` directory:
+
+```env
+PORT=5001
+MONGODB_URI=mongodb://localhost:27017/driveclone
+JWT_SECRET=your_secret_here
+UPLOAD_DIR=uploads
+```
+
+Make sure MongoDB is running before starting the backend.
+
+### 4. Start the Backend
+
+```bash
 npm run dev
 ```
 
-### 3. Frontend Setup (New Terminal)
+### 5. Frontend Setup
+
+Open a new terminal from the project root:
+
 ```bash
 cd frontend
 npm install
 npm start
 ```
 
-### 4. Access the Application
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:5001
+### 6. Access the Application
 
-## Environment Variables
+- **Frontend:** http://localhost:3000
+- **Backend API:** http://localhost:5001
 
-Create a `.env` file in the backend directory with:
-```env
-PORT=5001
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-UPLOAD_DIR=uploads
-NODE_ENV=development
-```
+## Features
 
-## Features Included
-
-✅ User Registration & Login
-✅ JWT Authentication
-✅ File Upload (Drag & Drop)
-✅ File Download
-✅ Folder Creation & Navigation
-✅ File/Folder Deletion
-✅ Search Functionality
-✅ Responsive Design
-✅ Real-time Notifications
+- User Registration and Login
+- JWT Authentication
+- File Upload and Download
+- Drag-and-Drop File Upload
+- Folder Creation and Navigation
+- File and Folder Management
+- Search Functionality
+- Responsive User Interface
+- Activity History
+- File Sharing
 
 ## Tech Stack
 
 ### Frontend
-- React 18
+- React
 - Tailwind CSS
 - React Router
 - Axios
 - React Dropzone
-- Lucide Icons
+- Lucide React
 
 ### Backend
 - Node.js
 - Express.js
-- Multer (File Upload)
+- MongoDB
+- Mongoose
+- Multer
 - JWT Authentication
-- bcryptjs (Password Hashing)
+- bcryptjs
 
 ## Deployment
 
-### Backend (Heroku/Railway/DigitalOcean)
-1. Set environment variables
-2. Deploy backend code
-3. Update CORS settings if needed
+The application can be deployed using platforms such as:
 
-### Frontend (Netlify/Vercel)
-1. Build the project: `npm run build`
-2. Deploy the `build` folder
-3. Set `REACT_APP_API_URL` environment variable
+- **Backend:** Railway or Render
+- **Frontend:** Vercel or Netlify
 
-## Contributing
+Deployment requires configuring environment variables and updating the backend API URL and CORS settings.
 
-1. Fork the repository
-2. Create your feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add some amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
+---
 
-## License
-
-This project is open source and available under the MIT License.
+**Note:** TaskDrive is a full-stack learning project developed to explore file management, authentication, and MERN stack development.
