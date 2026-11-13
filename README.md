@@ -101,37 +101,9 @@ google-drive-clone/
 
 ### Prerequisites
 - Node.js
-- MongoDB (running locally or a connection URI)
+- MongoDB
 
-### Setup
-
-1. Clone the repository and install dependencies:
-   ```bash
-   cd backend && npm install
-   cd ../frontend && npm install
-   ```
-
-2. Create a `.env` file inside `backend/` (see `.env.example`):
-   ```
-   PORT=5001
-   MONGODB_URI=mongodb://localhost:27017/driveclone
-   JWT_SECRET=your_secret_here
-   UPLOAD_DIR=uploads
-   ```
-
-3. Start the backend:
-   ```bash
-   cd backend
-   npm run dev
-   ```
-
-4. Start the frontend (in a separate terminal):
-   ```bash
-   cd frontend
-   npm start
-   ```
-
-5. Open `http://localhost:3000` in your browser.
+For installation instructions, environment configuration, and steps to run the application locally, please refer to the [Setup Guide](SETUP.md).
 
 ## API Overview
 
